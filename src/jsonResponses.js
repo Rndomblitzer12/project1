@@ -23,19 +23,19 @@ const getPoll = (request, response) => {
 
 const createPoll = (request, response, body) => {
   console.log('Request body:', body);
-  
+
   const parsedBody = JSON.parse(Object.keys(body)[0]);
-    const { question, options } = parsedBody;
+  const { question, options } = parsedBody;
 
   console.log(`Data 1: ${options}`);
   console.log(`Data 2: ${question}`);
-  
+
   // Ensure options is an array and has at least two elements
   if (!Array.isArray(options) || options.length < 2) {
-      const responseJSON = {
-          message: 'Invalid options data',
-      };
-      return respondJSON(request, response, 400, responseJSON);
+    const responseJSON = {
+      message: 'Invalid options data',
+    };
+    return respondJSON(request, response, 400, responseJSON);
   }
   const id = uuid();
   polls[id] = {
@@ -46,9 +46,7 @@ const createPoll = (request, response, body) => {
   return respondJSON(request, response, 201, { id });
 };
 
-
 const vote = (request, response, body) => {
-  
   const parsedBody = JSON.parse(Object.keys(body)[0]);
   const { pollId, option } = parsedBody;
   console.log(`Data 1: ${pollId}`);
@@ -56,10 +54,10 @@ const vote = (request, response, body) => {
 
   // Ensure pollId and option are not undefined
   if (!pollId || !option) {
-      const responseJSON = {
-          message: 'Invalid vote data',
-      };
-      return respondJSON(request, response, 400, responseJSON);
+    const responseJSON = {
+      message: 'Invalid vote data',
+    };
+    return respondJSON(request, response, 400, responseJSON);
   }
 
   const poll = polls[pollId];
