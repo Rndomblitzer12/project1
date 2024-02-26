@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Poll</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+</head>
+<body>
+    <section class="section">
+        <div class="container">
+            <h1 class="title" id="question">Loading...</h1>
+            <div id="options">
+                <!-- Voting options will be inserted here -->
+            </div>
+            <div id="results" style="display: none;">
+                <!-- Poll results will be inserted here -->
+            </div>
+        </div>
+    </section>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const pollId = localStorage.getItem('pollId');
+
+    console.log('URL Parameters:', urlParams); // Log URL parameters for debugging
+
+    if (!pollId) {
+        console.error('Poll ID is missing.');
+        return;
+    }
+
+    console.log('Poll ID:', pollId); // Log pollId for debugging
+
+    // Continue with your code using the pollId...
+
+
+
+            const displayPollData = async () => {
+                try {
+                    const response = await fetch(`/poll?id=${pollId}`);
+                    if (!response.ok) {
+                        throw new Error('Failed to fetch poll data.');
+                    }
+                    const pollData = await response.json();
+
+                    const questionElement = document.getElementById('question');
+                    questionElement.textContent = pollData.question;
+
+                    // Check if user has voted
+                    const userVoted = await checkIfUserVoted(pollId);
+
+                    if (userVoted) {
+                        displayResults(pollData);
+                    } else {
+                        displayOptions(pollData);
+                    }
+                } catch (error) {
+                    console.error('Error displaying poll data:', error);
+                }
+            };
+
+            const checkIfUserVoted = async (pollId) => {
+                try {
+                    const response = await fetch(`/poll?id=${pollId}`);
+                    if (!response.ok) {
+                        throw new Error('Failed to fetch poll data.');
+                    }
+                    const pollData = await response.json();
+                    // Check if any option has a count > 0
+                    return pollData.options && pollData.options.some(option => option.count > 0);
+                } catch (error) {
+                    console.error('Error checking if user voted:', error);
+                    return false;
+                }
+            };
+
+            const displayOptions = (pollData) => {
+                const optionsElement = document.getElementById('options');
+                optionsElement.innerHTML = ''; // Clear previous options
+
+                pollData.options.forEach(option => {
+                    const optionButton = document.createElement('button');
+                    optionButton.classList.add('button', 'is-light', 'option-button');
+                    optionButton.textContent = option.option;
+                    optionButton.addEventListener('click', async () => {
+                        await vote(pollId, option.option);
+                    });
+                    optionsElement.appendChild(optionButton);
+                });
+            };
+
+            const displayResults = (pollData) => {
+                const resultsElement = document.getElementById('results');
+                resultsElement.innerHTML = ''; // Clear previous results
+
+                pollData.options.forEach(option => {
+                    const optionResult = document.createElement('div');
+                    optionResult.textContent = `${option.option}: ${option.count} vote(s)`;
+                    resultsElement.appendChild(optionResult);
+                });
+
+                // Show the results section and hide the options section
+                document.getElementById('options').style.display = 'none';
+                resultsElement.style.display = 'block';
+            };
+
+            const vote = async (pollId, option) => {
+                try {
+                    const response = await fetch(`/vote?id=${pollId}`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ option })
+                    });
+                    const data = await response.json();
+                    alert(data.message);
+
+                    // After voting, display updated poll data
+                    displayPollData();
+                } catch (error) {
+                    console.error('Error voting:', error);
+                }
+            };
+
+            displayPollData();
+        });
+    </script>
+</body>
+</html>

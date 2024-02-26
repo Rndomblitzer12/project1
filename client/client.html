@@ -1,0 +1,81 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Poll App</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css"><script>
+    document.addEventListener('DOMContentLoaded', () => {
+    const createPollButton = document.getElementById('createPoll');
+
+    createPollButton.addEventListener('click', async () => {
+        const question = document.getElementById('question').value;
+const options = Array.from(document.querySelectorAll('.option')).map(input => input.value);
+
+console.log('Question:', question);
+console.log('Options:', options);
+
+const requestBody = {
+    question: question,
+    options: options
+};
+
+const response = await fetch('/create', {
+    method: 'POST',
+    headers: {
+        'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(requestBody)
+});
+
+const data = await response.json();
+console.log('Server response:', data); // Log the server response
+
+const pollId = data.id;
+// Ensure pollId is not undefined
+if (!pollId) {
+    console.error('Poll ID is undefined in server response.');
+    return;
+}
+
+// Store pollId in local storage
+localStorage.setItem('pollId', pollId);
+
+// Redirect to poll.html
+window.location.href = 'poll.html';
+
+            
+        
+    });
+});
+</script>
+</head>
+<body>
+    <section class="section">
+        <div class="container">
+            <h1 class="title">Create a Poll</h1>
+            <div class="field">
+                <label class="label">Question</label>
+                <div class="control">
+                    <input id="question" class="input" type="text" placeholder="Enter your question">
+                </div>
+            </div>
+            <div class="field">
+                <label class="label">Options</label>
+                <div class="control" id="options">
+                    <input class="input option" type="text" placeholder="Option 1">
+                    <input class="input option" type="text" placeholder="Option 2">
+                </div>
+            </div>
+            <div class="field is-grouped">
+                <div class="control">
+                    <button id="createPoll" class="button is-primary">Create Poll</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script src="client.js"></script>
+</body>
+</html>
