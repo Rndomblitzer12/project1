@@ -48,14 +48,21 @@ const createPoll = (request, response, body) => {
 
 
 const vote = (request, response, body) => {
-  const { id, option } = body;
-  if (!id || !option || !polls[id]) {
-    const responseJSON = {
-      message: 'Invalid vote data',
-    };
-    return respondJSON(request, response, 400, responseJSON);
+  
+  const parsedBody = JSON.parse(Object.keys(body)[0]);
+  const { pollId, option } = parsedBody;
+  console.log(`Data 1: ${pollId}`);
+  console.log(`Data 2: ${option}`);
+
+  // Ensure pollId and option are not undefined
+  if (!pollId || !option) {
+      const responseJSON = {
+          message: 'Invalid vote data',
+      };
+      return respondJSON(request, response, 400, responseJSON);
   }
-  const poll = polls[id];
+
+  const poll = polls[pollId];
   const selectedOption = poll.options.find((o) => o.option === option);
   if (!selectedOption) {
     const responseJSON = {

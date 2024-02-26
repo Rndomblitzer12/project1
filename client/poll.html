@@ -5,20 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Poll</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
-</head>
-<body>
-    <section class="section">
-        <div class="container">
-            <h1 class="title" id="question">Loading...</h1>
-            <div id="options">
-                <!-- Voting options will be inserted here -->
-            </div>
-            <div id="results" style="display: none;">
-                <!-- Poll results will be inserted here -->
-            </div>
-        </div>
-    </section>
-
     <script>
         document.addEventListener('DOMContentLoaded', async () => {
     const urlParams = new URLSearchParams(window.location.search);
@@ -32,10 +18,6 @@
     }
 
     console.log('Poll ID:', pollId); // Log pollId for debugging
-
-    // Continue with your code using the pollId...
-
-
 
             const displayPollData = async () => {
                 try {
@@ -113,7 +95,7 @@
                         headers: {
                             'Content-Type': 'application/json'
                         },
-                        body: JSON.stringify({ option })
+                        body: JSON.stringify({ pollId, option })
                     });
                     const data = await response.json();
                     alert(data.message);
@@ -128,5 +110,18 @@
             displayPollData();
         });
     </script>
+</head>
+<body>
+    <section class="section">
+        <div class="container">
+            <h1 class="title" id="question">Loading...</h1>
+            <div id="options">
+            </div>
+            <div id="results" style="display: none;">
+            </div>
+        </div>
+    </section>
+
+    
 </body>
 </html>

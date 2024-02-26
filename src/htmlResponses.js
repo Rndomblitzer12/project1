@@ -1,8 +1,7 @@
 const fs = require('fs');
-const path = require('path');
 
-const clientHTML = fs.readFileSync(path.join(__dirname, '../client', 'client.html'));
-const pollHTML = fs.readFileSync(path.join(__dirname, '../client', 'poll.html'));
+const clientHTML = fs.readFileSync(`${__dirname}/../client/client.html`);
+const pollHTML = fs.readFileSync(`${__dirname}/../client/poll.html`);
 
 const getIndex = (request, response) => {
   response.writeHead(200, { 'Content-Type': 'text/html' });
@@ -18,6 +17,5 @@ const getPollPage = (request, response) => {
 
 module.exports = {
   getIndex,
-
   getPollPage,
 };
