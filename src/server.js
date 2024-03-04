@@ -11,6 +11,8 @@ const urlStruct = {
     '/': htmlResponseHandler.getIndex,
     '/poll.html': htmlResponseHandler.getPollPage,
     '/poll': jsonResponseHandler.getPoll,
+    '/style.css': htmlResponseHandler.getStyle,
+    '/poll.css': htmlResponseHandler.getStylePoll,
     notFound: jsonResponseHandler.notFound,
   },
 

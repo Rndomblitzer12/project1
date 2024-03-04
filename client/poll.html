@@ -5,19 +5,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Poll</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+    <link rel="stylesheet" type="text/css" href="poll.css">
+
     <script>
         document.addEventListener('DOMContentLoaded', async () => {
-    const urlParams = new URLSearchParams(window.location.search);
-    const pollId = localStorage.getItem('pollId');
+            const urlParams = new URLSearchParams(window.location.search);
+            const pollId = urlParams.get('pollId');
 
-    console.log('URL Parameters:', urlParams); // Log URL parameters for debugging
+            console.log('Poll ID:', pollId); // Log pollId for debugging
 
-    if (!pollId) {
-        console.error('Poll ID is missing.');
-        return;
-    }
-
-    console.log('Poll ID:', pollId); // Log pollId for debugging
+            if (!pollId) {
+                console.error('Poll ID is missing.');
+                return;
+            }
 
             const displayPollData = async () => {
                 try {
@@ -31,7 +31,7 @@
                     questionElement.textContent = pollData.question;
 
                     // Check if user has voted
-                    const userVoted = await checkIfUserVoted(pollId);
+                    const userVoted = sessionStorage.getItem(`voted_${pollId}`) === 'true';
 
                     if (userVoted) {
                         displayResults(pollData);
@@ -40,21 +40,6 @@
                     }
                 } catch (error) {
                     console.error('Error displaying poll data:', error);
-                }
-            };
-
-            const checkIfUserVoted = async (pollId) => {
-                try {
-                    const response = await fetch(`/poll?id=${pollId}`);
-                    if (!response.ok) {
-                        throw new Error('Failed to fetch poll data.');
-                    }
-                    const pollData = await response.json();
-                    // Check if any option has a count > 0
-                    return pollData.options && pollData.options.some(option => option.count > 0);
-                } catch (error) {
-                    console.error('Error checking if user voted:', error);
-                    return false;
                 }
             };
 
@@ -77,9 +62,23 @@
                 const resultsElement = document.getElementById('results');
                 resultsElement.innerHTML = ''; // Clear previous results
 
+                const totalVotes = pollData.options.reduce((total, option) => total + option.count, 0);
+
                 pollData.options.forEach(option => {
                     const optionResult = document.createElement('div');
-                    optionResult.textContent = `${option.option}: ${option.count} vote(s)`;
+                    optionResult.classList.add('option-result');
+
+                    const optionText = document.createElement('span');
+                    optionText.textContent = `${option.option}: ${option.count} vote(s)`;
+
+                    const optionBar = document.createElement('div');
+                    optionBar.classList.add('option-bar');
+                    const percentage = totalVotes === 0 ? 0 : (option.count / totalVotes) * 100;
+                    optionBar.style.width = `${percentage}%`;
+
+                    optionResult.appendChild(optionText);
+                    optionResult.appendChild(optionBar);
+
                     resultsElement.appendChild(optionResult);
                 });
 
@@ -99,6 +98,9 @@
                     });
                     const data = await response.json();
                     alert(data.message);
+
+                    // Store the voted flag in sessionStorage
+                    sessionStorage.setItem(`voted_${pollId}`, 'true');
 
                     // After voting, display updated poll data
                     displayPollData();
@@ -121,7 +123,5 @@
             </div>
         </div>
     </section>
-
-    
 </body>
 </html>

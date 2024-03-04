@@ -1,4 +1,3 @@
-const querystring = require('querystring');
 const url = require('url');
 const uuid = require('uuid').v4;
 
@@ -11,7 +10,9 @@ const respondJSON = (request, response, status, object) => {
 };
 
 const getPoll = (request, response) => {
-  const { id } = querystring.parse(url.parse(request.url).query);
+  const parsedUrl = url.parse(request.url, true);
+  const { id } = parsedUrl.query;
+
   if (!id || !polls[id]) {
     const responseJSON = {
       message: 'Poll not found',
@@ -27,9 +28,6 @@ const createPoll = (request, response, body) => {
   const parsedBody = JSON.parse(Object.keys(body)[0]);
   const { question, options } = parsedBody;
 
-  console.log(`Data 1: ${options}`);
-  console.log(`Data 2: ${question}`);
-
   // Ensure options is an array and has at least two elements
   if (!Array.isArray(options) || options.length < 2) {
     const responseJSON = {
@@ -42,15 +40,12 @@ const createPoll = (request, response, body) => {
     question,
     options: options.map((option) => ({ option, count: 0 })),
   };
-  console.log('New poll created with id:', id); // Log the generated poll id
   return respondJSON(request, response, 201, { id });
 };
 
 const vote = (request, response, body) => {
   const parsedBody = JSON.parse(Object.keys(body)[0]);
   const { pollId, option } = parsedBody;
-  console.log(`Data 1: ${pollId}`);
-  console.log(`Data 2: ${option}`);
 
   // Ensure pollId and option are not undefined
   if (!pollId || !option) {

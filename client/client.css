@@ -1,0 +1,59 @@
+body {
+  background-color: #f5f5f5;
+  font-family: Arial, sans-serif;
+}
+
+.container {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 20px;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.title {
+  color: #333;
+  font-size: 28px;
+  margin-bottom: 20px;
+}
+
+.label {
+  font-weight: bold;
+}
+
+.field:not(:last-child) {
+  margin-bottom: 20px;
+}
+
+.option {
+  margin-bottom: 10px;
+}
+
+#addOption {
+  margin-top: 10px;
+}
+
+.button {
+  border-radius: 6px;
+}
+
+/* Primary button */
+.button.is-primary {
+  background-color: #3273dc;
+  border-color: #3273dc;
+}
+
+.button.is-primary:hover {
+  background-color: #276cda;
+  border-color: #276cda;
+}
+
+.button.is-primary.is-loading::after {
+  border-color: #fff transparent transparent transparent;
+}
+
+/* Grouped buttons */
+.field.is-grouped .control:not(:last-child) {
+  margin-right: 10px;
+}
